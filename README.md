@@ -17,7 +17,7 @@ magpie plugin add ./magpie-claude-launcher
 
 ## 使用
 
-在 VPS 启动 Magpie Web（网关模式），在运行终端命令的电脑安装 Claude Code。页面有三个独立复制按钮，以及「复制全部三行」按钮。首次打开须在「连接配置」填写网关密钥并保存，配置完整前复制按钮禁用，避免复制不可用的命令。
+在 VPS 启动 Magpie Web（网关模式），在运行终端命令的电脑安装 Claude Code。页面只有一个命令块和一个「复制」按钮，一次复制完整的单行启动命令。首次打开须在「连接配置」填写网关密钥并保存，配置完整前复制按钮禁用，避免复制不可用的命令。
 
 网关地址默认从插件自己的 `location.href` 解析：必须是 HTTP(S)，且路径包含 `/_magpie/plugin/`，随后取 `new URL(location.href).origin`（协议、主机及端口）。不使用沙盒的 `window.origin`，不读取父窗口，也不发起网络请求。
 
@@ -26,15 +26,13 @@ magpie plugin add ./magpie-claude-launcher
 - `http://localhost:3430/_magpie/plugin/<token>/index.html` → `http://localhost:3430`；`127.0.0.1` 同样原样保留，不改写成端口 3425。
 - 无法读取 URL、非 HTTP(S)、或没有插件路径：地址留空，展开配置并提示手动填写；绝不回退到 `127.0.0.1`。
 
-例如访问 `https://magpie.example.com`，填入该网关颁发的密钥后生成以下三行（示例中的密钥只是说明，不是默认值；LF 换行，无末尾换行）：
+例如访问 `https://magpie.example.com`，填入该网关颁发的密钥后生成以下一行（示例中的密钥只是说明，不是默认值；无换行或末尾换行）：
 
 ```sh
-export ANTHROPIC_BASE_URL=https://magpie.example.com
-export ANTHROPIC_API_KEY='<你的网关密钥>'
-claude
+ANTHROPIC_BASE_URL=https://magpie.example.com ANTHROPIC_API_KEY='<你的网关密钥>' claude
 ```
 
-粘贴到 Bash / Zsh 等 POSIX Shell，按终端提示确认执行；不适用于 PowerShell / CMD。环境变量影响当前终端及其后续子进程，不修改 Claude Code 配置文件，关闭终端后失效。页面不会安装或执行 `claude`，也不会探测网关是否可用。
+粘贴到 Bash / Zsh 等 POSIX Shell，按终端提示确认执行；不适用于 PowerShell / CMD。采用前缀环境变量写法，不使用 `export`，只对本次 `claude` 进程及其子进程生效，不改变当前终端环境或后续命令，不修改 Claude Code 配置文件。页面不会安装或执行 `claude`，也不会探测网关是否可用。
 
 ## 配置
 
@@ -51,7 +49,7 @@ claude
 
 可手动覆盖成反向代理域名、其他端口或所需基路径；自动推导只保留 origin，不保留反向代理的子路径。已有手动配置优先，保存保留其他选项字段。旧版已保存的 `127.0.0.1:3425` / `magpie` 不会被静默覆盖，升级后请手动改为 VPS 地址和网关密钥。
 
-自定义值中的 Shell 特殊字符会安全引用，不作为命令执行。拒绝空密钥、换行、NUL 和非 HTTP(S) 地址。
+值不含特殊字符时原样输出；含 Shell 特殊字符时用单引号包裹，其中的单引号转义为 `'"'"'`，不会作为命令执行。拒绝空密钥、换行、NUL 和非 HTTP(S) 地址。
 
 密钥会明文保存在 Magpie 的 `plugins.json`，并出现在页面命令、剪贴板及 Shell 历史中。仅使用 Magpie 网关密钥，不要填写上游服务密钥。
 
@@ -78,11 +76,20 @@ claude
 
 ## 验证记录
 
-已用官方 Magpie `0.1.2895` Linux CLI，在独立 `HOME` / `XDG_CONFIG_HOME` 中安装并通过真实 Magpie Web 的沙盒 iframe 验证（Chromium）。VPS 场景以 `0.0.0.0:3430` 监听，并通过非回环 IP 访问：
+`0.1.1` 本地检查：
+
+- JavaScript 语法与 Git 空白检查通过；33 项命令、配置、剪贴板及 Shell 检查通过。
+- 在 Bash / sh 中用临时 `claude` 可执行文件接收环境变量，核对特殊字符原样传入、无注入执行，且当前终端原有变量不变。
+- Chromium 实际复制并粘贴逐字匹配；本地 `sandbox="allow-scripts"` iframe 复制成功。模拟两种复制 API 均失败时，手动文本完整全选、临时元素清理。
+- 检查桌面、390px 窄屏、空密钥、配置展开及复制失败状态：一个命令块、一个复制按钮，无页面横向溢出。
+
+本次浏览器验证使用模拟 Magpie 选项桥接，未重新安装或运行真实 Magpie；默认值与配置持久化调用逻辑保持不变。
+
+此前版本已用官方 Magpie `0.1.2895` Linux CLI，在独立 `HOME` / `XDG_CONFIG_HOME` 中安装并通过真实 Magpie Web 的沙盒 iframe 验证（Chromium）。VPS 场景以 `0.0.0.0:3430` 监听，并通过非回环 IP 访问：
 
 - 实测沙盒 `window.origin === "null"`，但 `location.href` 仍是带真实主机、端口及插件路径的完整 URL，能够据此推导网页 origin。
 - 网络监听模式下通过 Web 端口请求 `/v1/models`：无密钥、`magpie`、网页登录密钥均为 401；有效网关密钥（`x-api-key` / Bearer）为 200。Web 回环地址加 `magpie` 仍为 401；直接访问本机网关端口加 `magpie` 为 200。仅开放 Web、未开启共享且网关只监听回环时，Web API 为 403。
-- 四个按钮均实际复制并粘贴核对，内容逐字匹配；真实 `navigator.clipboard` 不可用时，`execCommand` 回退成功。
+- 旧版四个按钮均实际复制并粘贴核对，内容逐字匹配；真实 `navigator.clipboard` 不可用时，`execCommand` 回退成功。
 - 注入 API 缺失、现代 API 成功、回退返回 `false` / 抛异常，核对成功／失败提示、手动文本全选及临时元素清理。
 - 真实桥接保存配置，重新打开后持久化；保留其他已有选项字段，拒绝非法 URL。
 - 带引号、空格、命令替换及其他 Shell 特殊字符的测试值，执行生成命令后得到原始值，未执行注入内容；测试中用本地函数替代 `claude`。

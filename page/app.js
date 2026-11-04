@@ -15,13 +15,13 @@
   const keyInput = document.getElementById("api-key");
   const settings = document.getElementById("settings");
   const saveButton = document.getElementById("save-options");
-  const copyButtons = [...document.querySelectorAll("[data-copy], #copy-all")];
+  const copyButton = document.getElementById("copy-command");
   const copyStatus = document.getElementById("copy-status");
   const settingsStatus = document.getElementById("settings-status");
   const manualCopy = document.getElementById("manual-copy");
   const manualText = document.getElementById("manual-text");
   let options = {};
-  let lines = [];
+  let command = "";
 
   function feedback(element, message, state = "") {
     element.textContent = message;
@@ -59,14 +59,9 @@
     const apiKey = options.apiKey ?? defaults.apiKey;
     baseInput.value = baseUrl;
     keyInput.value = apiKey;
-    lines = [];
-    copyButtons.forEach((button) => { button.disabled = true; });
-    document.getElementById("base-command").textContent = baseUrl
-      ? `export ANTHROPIC_BASE_URL=${shellValue(String(baseUrl))}`
-      : "请在连接配置填写网关地址";
-    document.getElementById("key-command").textContent = apiKey
-      ? `export ANTHROPIC_API_KEY=${shellValue(String(apiKey))}`
-      : "请在连接配置填写网关密钥（Gateway Key）";
+    command = "";
+    copyButton.disabled = true;
+    document.getElementById("command").textContent = "请在连接配置填写有效的网关地址和密钥（Gateway Key）";
     try {
       validate(baseUrl, apiKey);
     } catch (error) {
@@ -74,15 +69,12 @@
       feedback(copyStatus, error.message, "error");
       return;
     }
-    lines = [
-      `export ANTHROPIC_BASE_URL=${shellValue(baseUrl)}`,
-      `export ANTHROPIC_API_KEY=${shellValue(apiKey)}`,
-      "claude",
-    ];
-    copyButtons.forEach((button) => { button.disabled = false; });
+    command = `ANTHROPIC_BASE_URL=${shellValue(baseUrl)} ANTHROPIC_API_KEY=${shellValue(apiKey)} claude`;
+    document.getElementById("command").textContent = command;
+    copyButton.disabled = false;
     manualCopy.hidden = true;
     manualText.value = "";
-    feedback(copyStatus, "就绪。可单独复制，或一次复制全部三行。");
+    feedback(copyStatus, "就绪。复制这一行命令即可启动 Claude Code。");
   }
 
   function legacyCopy(text) {
@@ -105,7 +97,7 @@
     }
   }
 
-  async function copy(text, label) {
+  async function copy(text) {
     manualCopy.hidden = true;
     manualText.value = "";
     try {
@@ -114,7 +106,7 @@
       } catch {
         if (!legacyCopy(text)) throw new Error("Copy was refused");
       }
-      feedback(copyStatus, `已复制${label}。请粘贴到终端运行。`, "success");
+      feedback(copyStatus, "已复制命令。请粘贴到终端运行。", "success");
     } catch {
       feedback(copyStatus, "复制失败：浏览器限制了剪贴板。请在下方手动复制。", "error");
       manualCopy.hidden = false;
@@ -124,14 +116,8 @@
     }
   }
 
-  document.querySelectorAll("[data-copy]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const index = Number(button.dataset.copy);
-      void copy(lines[index], `第 ${index + 1} 行`);
-    });
-  });
-  document.getElementById("copy-all").addEventListener("click", () => {
-    void copy(lines.join("\n"), "全部三行");
+  copyButton.addEventListener("click", () => {
+    void copy(command);
   });
 
   saveButton.addEventListener("click", async () => {

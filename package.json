@@ -1,6 +1,6 @@
 {
   "name": "magpie-claude-launcher",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "复制终端命令，通过 Magpie 网关启动 Claude Code，无需修改配置文件。",
   "repository": {

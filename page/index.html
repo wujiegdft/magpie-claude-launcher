@@ -13,37 +13,20 @@
       <header>
         <p class="eyebrow">MAGPIE → TERMINAL</p>
         <h1>Claude Code 快捷启动</h1>
-        <p class="muted">复制到终端，按顺序运行。不改配置文件。</p>
+        <p class="muted">复制一行命令到终端运行。不改配置文件。</p>
       </header>
 
-      <section class="commands" aria-label="启动命令">
+      <section aria-label="启动命令">
         <article class="command">
           <div class="command-heading">
-            <h2><span class="step">01</span> 设置网关地址</h2>
-            <button type="button" data-copy="0" aria-label="复制网关地址命令" disabled>复制</button>
+            <h2>启动 Claude Code</h2>
+            <button type="button" id="copy-command" class="primary" aria-label="复制 Claude Code 启动命令" disabled>复制</button>
           </div>
-          <pre><code id="base-command">正在识别当前网页的网关地址…</code></pre>
-        </article>
-        <article class="command">
-          <div class="command-heading">
-            <h2><span class="step">02</span> 设置 API 密钥</h2>
-            <button type="button" data-copy="1" aria-label="复制 API 密钥命令" disabled>复制</button>
-          </div>
-          <pre><code id="key-command">请在连接配置填写网关密钥（Gateway Key）</code></pre>
-        </article>
-        <article class="command">
-          <div class="command-heading">
-            <h2><span class="step">03</span> 启动 Claude Code</h2>
-            <button type="button" data-copy="2" aria-label="复制 Claude Code 启动命令" disabled>复制</button>
-          </div>
-          <pre><code>claude</code></pre>
+          <pre><code id="command">正在读取连接配置…</code></pre>
         </article>
       </section>
 
-      <div class="copy-actions">
-        <button type="button" id="copy-all" class="primary" disabled>复制全部三行</button>
-        <span class="muted">适用于 Bash / Zsh 等 POSIX Shell</span>
-      </div>
+      <p class="shell-note muted">适用于 Bash / Zsh 等 POSIX Shell</p>
       <p id="copy-status" role="status" aria-live="polite">正在读取配置…</p>
       <div id="manual-copy" hidden>
         <label for="manual-text">自动复制被拦截，请手动复制以下内容：</label>
@@ -65,7 +48,7 @@
         </fieldset>
         <p id="settings-status" role="status" aria-live="polite"></p>
       </details>
-      <footer class="muted">请先在 VPS 启动 Magpie，并在运行命令的电脑安装 Claude Code。远程 API 须开启网络共享或设置 MAGPIE_ADDR 为网络监听地址；跨公网请使用 HTTPS / VPN。环境变量仅作用于当前终端及其子进程。</footer>
+      <footer class="muted">请先在 VPS 启动 Magpie，并在运行命令的电脑安装 Claude Code。远程 API 须开启网络共享或设置 MAGPIE_ADDR 为网络监听地址；跨公网请使用 HTTPS / VPN。前缀环境变量仅作用于本次 Claude Code 进程及其子进程，不改变当前终端环境。</footer>
     </main>
   </body>
 </html>

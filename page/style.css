@@ -11,10 +11,8 @@ h1 { font-size: 24px; margin: 0 0 10px; }
 h2 { font-size: 13px; margin: 0; }
 .eyebrow { font-size: 10px; letter-spacing: .14em; color: var(--magpie-muted, GrayText); margin-bottom: 10px; }
 .muted { color: var(--magpie-muted, GrayText); }
-.commands { display: grid; gap: 12px; }
 .command { border: 1px solid var(--magpie-border, #8886); border-radius: 10px; padding: 14px 16px; }
 .command-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.step { font: 11px ui-monospace, monospace; color: var(--magpie-muted, GrayText); margin-right: 10px; }
 pre { margin: 12px 0 2px; white-space: pre-wrap; overflow-wrap: anywhere; }
 code, textarea { font: 12px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace; }
 button { cursor: pointer; padding: 7px 13px; border-radius: 6px; }
@@ -23,8 +21,7 @@ button:disabled { cursor: not-allowed; opacity: .5; }
 button:focus-visible, summary:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--magpie-accent, #4169e1); outline-offset: 3px; }
 .primary { background: var(--magpie-accent, #4169e1); color: white; border: 1px solid transparent; }
 .primary:disabled { background: var(--magpie-border, #8886); color: var(--magpie-muted, GrayText); }
-.copy-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 20px; }
-.copy-actions .muted { font-size: 11px; }
+.shell-note { font-size: 11px; margin-top: 20px; }
 #copy-status { min-height: 22px; margin: 10px 0 18px; }
 [data-state="error"] { color: var(--magpie-danger, #c43c36); }
 [data-state="success"] { color: var(--magpie-accent, #4169e1); }
