@@ -1,0 +1,22 @@
+{
+  "name": "magpie-claude-launcher",
+  "version": "0.1.0",
+  "private": true,
+  "description": "复制终端命令，通过 Magpie 网关启动 Claude Code，无需修改配置文件。",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wujiegdft/magpie-claude-launcher"
+  },
+  "license": "MIT",
+  "magpie": {
+    "name": "Claude Code 快捷启动",
+    "page": {
+      "title": "Claude Code launcher",
+      "titles": {
+        "zh": "Claude Code 快捷启动",
+        "zh-TW": "Claude Code 快速啟動"
+      },
+      "file": "page/index.html"
+    }
+  }
+}

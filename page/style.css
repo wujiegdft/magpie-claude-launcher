@@ -1,0 +1,45 @@
+body {
+  margin: 0;
+  padding: 32px 24px;
+  color: var(--magpie-fg, CanvasText);
+  background: var(--magpie-bg, Canvas);
+}
+
+main { max-width: 720px; margin: 0 auto; }
+header { margin-bottom: 24px; }
+h1 { font-size: 24px; margin: 0 0 10px; }
+h2 { font-size: 13px; margin: 0; }
+.eyebrow { font-size: 10px; letter-spacing: .14em; color: var(--magpie-muted, GrayText); margin-bottom: 10px; }
+.muted { color: var(--magpie-muted, GrayText); }
+.commands { display: grid; gap: 12px; }
+.command { border: 1px solid var(--magpie-border, #8886); border-radius: 10px; padding: 14px 16px; }
+.command-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.step { font: 11px ui-monospace, monospace; color: var(--magpie-muted, GrayText); margin-right: 10px; }
+pre { margin: 12px 0 2px; white-space: pre-wrap; overflow-wrap: anywhere; }
+code, textarea { font: 12px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace; }
+button { cursor: pointer; padding: 7px 13px; border-radius: 6px; }
+button:disabled { cursor: not-allowed; opacity: .5; }
+#save-options:disabled { cursor: wait; }
+button:focus-visible, summary:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--magpie-accent, #4169e1); outline-offset: 3px; }
+.primary { background: var(--magpie-accent, #4169e1); color: white; border: 1px solid transparent; }
+.primary:disabled { background: var(--magpie-border, #8886); color: var(--magpie-muted, GrayText); }
+.copy-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 20px; }
+.copy-actions .muted { font-size: 11px; }
+#copy-status { min-height: 22px; margin: 10px 0 18px; }
+[data-state="error"] { color: var(--magpie-danger, #c43c36); }
+[data-state="success"] { color: var(--magpie-accent, #4169e1); }
+details { border-top: 1px solid var(--magpie-border, #8886); padding-top: 18px; }
+summary { cursor: pointer; font-weight: 600; margin-bottom: 12px; }
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; }
+fieldset label:not(:first-child) { margin-top: 6px; }
+input { min-width: 0; width: 100%; box-sizing: border-box; padding: 8px 10px; }
+#save-options { justify-self: start; }
+textarea { display: block; width: 100%; box-sizing: border-box; margin: 8px 0 18px; padding: 10px; }
+.copy-buffer { position: fixed; left: -9999px; top: 0; }
+footer { margin-top: 22px; font-size: 11px; line-height: 1.7; }
+
+@media (max-width: 480px) {
+  body { padding: 22px 16px; }
+  h1 { font-size: 21px; }
+  .command { padding: 12px; }
+}

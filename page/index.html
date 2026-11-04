@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Claude Code 快捷启动</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="_magpie/bridge.js"></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">MAGPIE → TERMINAL</p>
+        <h1>Claude Code 快捷启动</h1>
+        <p class="muted">复制到终端，按顺序运行。不改配置文件。</p>
+      </header>
+
+      <section class="commands" aria-label="启动命令">
+        <article class="command">
+          <div class="command-heading">
+            <h2><span class="step">01</span> 设置网关地址</h2>
+            <button type="button" data-copy="0" aria-label="复制网关地址命令" disabled>复制</button>
+          </div>
+          <pre><code id="base-command">正在识别当前网页的网关地址…</code></pre>
+        </article>
+        <article class="command">
+          <div class="command-heading">
+            <h2><span class="step">02</span> 设置 API 密钥</h2>
+            <button type="button" data-copy="1" aria-label="复制 API 密钥命令" disabled>复制</button>
+          </div>
+          <pre><code id="key-command">请在连接配置填写网关密钥（Gateway Key）</code></pre>
+        </article>
+        <article class="command">
+          <div class="command-heading">
+            <h2><span class="step">03</span> 启动 Claude Code</h2>
+            <button type="button" data-copy="2" aria-label="复制 Claude Code 启动命令" disabled>复制</button>
+          </div>
+          <pre><code>claude</code></pre>
+        </article>
+      </section>
+
+      <div class="copy-actions">
+        <button type="button" id="copy-all" class="primary" disabled>复制全部三行</button>
+        <span class="muted">适用于 Bash / Zsh 等 POSIX Shell</span>
+      </div>
+      <p id="copy-status" role="status" aria-live="polite">正在读取配置…</p>
+      <div id="manual-copy" hidden>
+        <label for="manual-text">自动复制被拦截，请手动复制以下内容：</label>
+        <textarea id="manual-text" rows="4" readonly spellcheck="false"></textarea>
+      </div>
+
+      <details>
+        <summary>连接配置</summary>
+        <p class="muted">保存在此插件的 Magpie 选项中，保存后更新命令。不会测试网关连接。</p>
+        <fieldset id="settings" disabled>
+          <label for="base-url">网关地址（Base URL）</label>
+          <input id="base-url" type="url" placeholder="自动识别当前网页地址，或手动填写 HTTP(S) URL" autocomplete="off" spellcheck="false">
+          <p class="muted">默认取当前网页的协议、域名和端口。可覆盖为反向代理域名；识别失败时须手动填写。</p>
+          <label for="api-key">网关密钥（Gateway Key）</label>
+          <input id="api-key" type="password" placeholder="默认留空，请填写已启用的网关密钥" autocomplete="off" spellcheck="false">
+          <p class="muted">在 VPS 的「Gateway → Gateway keys」创建，或运行 magpie gateway-key add "Claude Code"。不要填写网页登录密钥（MAGPIE_WEB_KEY）；Web 端口不接受占位值 magpie，即使地址是 localhost。</p>
+          <p class="muted">密钥会出现在上方命令、剪贴板和终端历史中；仅填写网关密钥。</p>
+          <button type="button" id="save-options">保存配置</button>
+        </fieldset>
+        <p id="settings-status" role="status" aria-live="polite"></p>
+      </details>
+      <footer class="muted">请先在 VPS 启动 Magpie，并在运行命令的电脑安装 Claude Code。远程 API 须开启网络共享或设置 MAGPIE_ADDR 为网络监听地址；跨公网请使用 HTTPS / VPN。环境变量仅作用于当前终端及其子进程。</footer>
+    </main>
+  </body>
+</html>
