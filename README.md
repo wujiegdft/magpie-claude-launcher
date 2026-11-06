@@ -17,7 +17,7 @@ magpie plugin add ./magpie-claude-launcher
 
 ## 使用
 
-在 VPS 启动 Magpie Web（网关模式），在运行终端命令的电脑安装 Claude Code。页面只有一个命令块和一个「复制」按钮，一次复制完整的单行启动命令。首次打开须在「连接配置」填写网关密钥并保存，配置完整前复制按钮禁用，避免复制不可用的命令。
+在 VPS 启动 Magpie Web（网关模式），在运行终端命令的电脑安装 Claude Code。页面同时预览 POSIX Shell 和 Windows PowerShell 两种单行启动命令：「复制」保留原有 POSIX 命令，「复制 PowerShell」复制 PowerShell 命令。首次打开须在「连接配置」填写网关密钥并保存，配置完整前两个复制按钮均禁用，避免复制不可用的命令。
 
 网关地址默认从插件自己的 `location.href` 解析：必须是 HTTP(S)，且路径包含 `/_magpie/plugin/`，随后取 `new URL(location.href).origin`（协议、主机及端口）。不使用沙盒的 `window.origin`，不读取父窗口，也不发起网络请求。
 
@@ -26,13 +26,25 @@ magpie plugin add ./magpie-claude-launcher
 - `http://localhost:3430/_magpie/plugin/<token>/index.html` → `http://localhost:3430`；`127.0.0.1` 同样原样保留，不改写成端口 3425。
 - 无法读取 URL、非 HTTP(S)、或没有插件路径：地址留空，展开配置并提示手动填写；绝不回退到 `127.0.0.1`。
 
-例如访问 `https://magpie.example.com`，填入该网关颁发的密钥后生成以下一行（示例中的密钥只是说明，不是默认值；无换行或末尾换行）：
+例如访问 `https://magpie.example.com`，填入该网关颁发的密钥后生成以下命令（示例中的密钥只是说明，不是默认值；每条均为单行，无末尾换行）：
+
+**POSIX Shell（Bash / Zsh 等）**，点击「复制」：
 
 ```sh
 ANTHROPIC_BASE_URL=https://magpie.example.com ANTHROPIC_API_KEY='<你的网关密钥>' claude
 ```
 
-粘贴到 Bash / Zsh 等 POSIX Shell，按终端提示确认执行；不适用于 PowerShell / CMD。采用前缀环境变量写法，不使用 `export`，只对本次 `claude` 进程及其子进程生效，不改变当前终端环境或后续命令，不修改 Claude Code 配置文件。页面不会安装或执行 `claude`，也不会探测网关是否可用。
+采用前缀环境变量写法，不使用 `export`，只对本次 `claude` 进程及其子进程生效，不改变当前终端环境或后续命令。
+
+**Windows PowerShell**，点击「复制 PowerShell」：
+
+```powershell
+$env:ANTHROPIC_BASE_URL='https://magpie.example.com'; $env:ANTHROPIC_API_KEY='<你的网关密钥>'; claude
+```
+
+PowerShell 命令会修改当前会话环境变量，后续命令也会继承，不会自动恢复原值；不会永久修改用户或系统环境变量。
+
+按终端类型选择对应命令，粘贴后按终端提示确认执行。两种命令均不适用于 CMD，均不修改 Claude Code 配置文件。页面不会安装或执行 `claude`，也不会探测网关是否可用。
 
 ## 配置
 
@@ -49,7 +61,7 @@ ANTHROPIC_BASE_URL=https://magpie.example.com ANTHROPIC_API_KEY='<你的网关�
 
 可手动覆盖成反向代理域名、其他端口或所需基路径；自动推导只保留 origin，不保留反向代理的子路径。已有手动配置优先，保存保留其他选项字段。旧版已保存的 `127.0.0.1:3425` / `magpie` 不会被静默覆盖，升级后请手动改为 VPS 地址和网关密钥。
 
-值不含特殊字符时原样输出；含 Shell 特殊字符时用单引号包裹，其中的单引号转义为 `'"'"'`，不会作为命令执行。拒绝空密钥、换行、NUL 和非 HTTP(S) 地址。
+POSIX 值不含特殊字符时原样输出；含 Shell 特殊字符时用单引号包裹，其中的单引号转义为 `'"'"'`。PowerShell 值始终用单引号包裹，内部单引号 `'` 写成 `''`，不复用 POSIX 转义。两种命令均将值作为字面量，不作为命令执行；共用现有配置校验，拒绝空密钥、换行、NUL 和非 HTTP(S) 地址。
 
 密钥会明文保存在 Magpie 的 `plugins.json`，并出现在页面命令、剪贴板及 Shell 历史中。仅使用 Magpie 网关密钥，不要填写上游服务密钥。
 
@@ -76,14 +88,21 @@ ANTHROPIC_BASE_URL=https://magpie.example.com ANTHROPIC_API_KEY='<你的网关�
 
 ## 验证记录
 
-`0.1.1` 本地检查：
+PowerShell 支持本地检查：
+
+- JavaScript 语法与 Git 空白检查通过；46 项命令、配置、剪贴板及真实 Bash / sh / PowerShell 执行检查通过，POSIX 输出与修改前逐字一致。
+- PowerShell 7.6.9（Linux）执行生成命令：单引号、空格、美元符号、反引号、分号及中文原样传入，无测试注入执行，当前会话环境变量按预期保留；Bash / sh 前缀不改变后续命令环境。
+- Chromium 实际复制粘贴核对两种命令，PowerShell 的原生 `execCommand` 回退成功；模拟自动复制失败时，手动文本与对应预览一致并完整全选，临时元素清理。
+- 已查看桌面、390px 窄屏、空密钥及 PowerShell 手动复制状态，双按钮与双预览无横向溢出。使用模拟 Magpie 选项桥接，未修改真实桥接；未验证原生 Windows PowerShell 或真实 Claude Code 模型请求。
+
+此前 `0.1.1` 本地检查（新增 PowerShell 支持前）：
 
 - JavaScript 语法与 Git 空白检查通过；33 项命令、配置、剪贴板及 Shell 检查通过。
 - 在 Bash / sh 中用临时 `claude` 可执行文件接收环境变量，核对特殊字符原样传入、无注入执行，且当前终端原有变量不变。
 - Chromium 实际复制并粘贴逐字匹配；本地 `sandbox="allow-scripts"` iframe 复制成功。模拟两种复制 API 均失败时，手动文本完整全选、临时元素清理。
 - 检查桌面、390px 窄屏、空密钥、配置展开及复制失败状态：一个命令块、一个复制按钮，无页面横向溢出。
 
-本次浏览器验证使用模拟 Magpie 选项桥接，未重新安装或运行真实 Magpie；默认值与配置持久化调用逻辑保持不变。
+该版本浏览器验证使用模拟 Magpie 选项桥接，未重新安装或运行真实 Magpie；默认值与配置持久化调用逻辑保持不变。
 
 此前版本已用官方 Magpie `0.1.2895` Linux CLI，在独立 `HOME` / `XDG_CONFIG_HOME` 中安装并通过真实 Magpie Web 的沙盒 iframe 验证（Chromium）。VPS 场景以 `0.0.0.0:3430` 监听，并通过非回环 IP 访问：
 

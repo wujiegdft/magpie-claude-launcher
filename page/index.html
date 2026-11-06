@@ -20,13 +20,19 @@
         <article class="command">
           <div class="command-heading">
             <h2>启动 Claude Code</h2>
-            <button type="button" id="copy-command" class="primary" aria-label="复制 Claude Code 启动命令" disabled>复制</button>
+            <div class="command-actions">
+              <button type="button" id="copy-command" class="primary" aria-label="复制 Claude Code 启动命令" disabled>复制</button>
+              <button type="button" id="copy-powershell" aria-label="复制 PowerShell 启动命令" disabled>复制 PowerShell</button>
+            </div>
           </div>
+          <p class="command-shell muted">POSIX Shell（Bash / Zsh 等）</p>
           <pre><code id="command">正在读取连接配置…</code></pre>
+          <p class="command-shell muted">PowerShell（Windows）</p>
+          <pre><code id="powershell-command">正在读取连接配置…</code></pre>
         </article>
       </section>
 
-      <p class="shell-note muted">适用于 Bash / Zsh 等 POSIX Shell</p>
+      <p class="shell-note muted">POSIX Shell 点击「复制」；Windows PowerShell 点击「复制 PowerShell」。两种命令均不适用于 CMD。</p>
       <p id="copy-status" role="status" aria-live="polite">正在读取配置…</p>
       <div id="manual-copy" hidden>
         <label for="manual-text">自动复制被拦截，请手动复制以下内容：</label>
@@ -48,7 +54,7 @@
         </fieldset>
         <p id="settings-status" role="status" aria-live="polite"></p>
       </details>
-      <footer class="muted">请先在 VPS 启动 Magpie，并在运行命令的电脑安装 Claude Code。远程 API 须开启网络共享或设置 MAGPIE_ADDR 为网络监听地址；跨公网请使用 HTTPS / VPN。前缀环境变量仅作用于本次 Claude Code 进程及其子进程，不改变当前终端环境。</footer>
+      <footer class="muted">请先在 VPS 启动 Magpie，并在运行命令的电脑安装 Claude Code。远程 API 须开启网络共享或设置 MAGPIE_ADDR 为网络监听地址；跨公网请使用 HTTPS / VPN。POSIX 前缀环境变量仅作用于本次 Claude Code 进程及其子进程，不改变当前终端环境；PowerShell 命令会修改当前会话环境变量，后续命令也会继承。</footer>
     </main>
   </body>
 </html>

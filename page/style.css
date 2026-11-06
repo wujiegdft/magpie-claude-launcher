@@ -12,7 +12,9 @@ h2 { font-size: 13px; margin: 0; }
 .eyebrow { font-size: 10px; letter-spacing: .14em; color: var(--magpie-muted, GrayText); margin-bottom: 10px; }
 .muted { color: var(--magpie-muted, GrayText); }
 .command { border: 1px solid var(--magpie-border, #8886); border-radius: 10px; padding: 14px 16px; }
-.command-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.command-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.command-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.command-shell { font-size: 11px; margin: 16px 0 0; }
 pre { margin: 12px 0 2px; white-space: pre-wrap; overflow-wrap: anywhere; }
 code, textarea { font: 12px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace; }
 button { cursor: pointer; padding: 7px 13px; border-radius: 6px; }

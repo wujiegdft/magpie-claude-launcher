@@ -16,12 +16,14 @@
   const settings = document.getElementById("settings");
   const saveButton = document.getElementById("save-options");
   const copyButton = document.getElementById("copy-command");
+  const copyPowerShellButton = document.getElementById("copy-powershell");
   const copyStatus = document.getElementById("copy-status");
   const settingsStatus = document.getElementById("settings-status");
   const manualCopy = document.getElementById("manual-copy");
   const manualText = document.getElementById("manual-text");
   let options = {};
   let command = "";
+  let powerShellCommand = "";
 
   function feedback(element, message, state = "") {
     element.textContent = message;
@@ -33,6 +35,10 @@
     return /^[A-Za-z0-9_@%+=:,./-]+$/.test(value)
       ? value
       : "'" + value.replace(/'/g, "'\"'\"'") + "'";
+  }
+
+  function powerShellValue(value) {
+    return "'" + value.replace(/'/g, "''") + "'";
   }
 
   function validate(baseUrl, apiKey) {
@@ -60,8 +66,11 @@
     baseInput.value = baseUrl;
     keyInput.value = apiKey;
     command = "";
+    powerShellCommand = "";
     copyButton.disabled = true;
+    copyPowerShellButton.disabled = true;
     document.getElementById("command").textContent = "请在连接配置填写有效的网关地址和密钥（Gateway Key）";
+    document.getElementById("powershell-command").textContent = "请在连接配置填写有效的网关地址和密钥（Gateway Key）";
     try {
       validate(baseUrl, apiKey);
     } catch (error) {
@@ -70,11 +79,14 @@
       return;
     }
     command = `ANTHROPIC_BASE_URL=${shellValue(baseUrl)} ANTHROPIC_API_KEY=${shellValue(apiKey)} claude`;
+    powerShellCommand = `$env:ANTHROPIC_BASE_URL=${powerShellValue(baseUrl)}; $env:ANTHROPIC_API_KEY=${powerShellValue(apiKey)}; claude`;
     document.getElementById("command").textContent = command;
+    document.getElementById("powershell-command").textContent = powerShellCommand;
     copyButton.disabled = false;
+    copyPowerShellButton.disabled = false;
     manualCopy.hidden = true;
     manualText.value = "";
-    feedback(copyStatus, "就绪。复制这一行命令即可启动 Claude Code。");
+    feedback(copyStatus, "就绪。按终端类型复制对应的一行命令即可启动 Claude Code。");
   }
 
   function legacyCopy(text) {
@@ -118,6 +130,10 @@
 
   copyButton.addEventListener("click", () => {
     void copy(command);
+  });
+
+  copyPowerShellButton.addEventListener("click", () => {
+    void copy(powerShellCommand);
   });
 
   saveButton.addEventListener("click", async () => {
